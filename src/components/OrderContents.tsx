@@ -1,13 +1,15 @@
+import { Dispatch } from "react";
 import formatCurrency from "../helpers";
 import { OrderItem, MenuItem } from "../types";
 import { TiDelete } from "react-icons/ti";
+import { OrderActions } from "../reducers/order-reducer";
 
 type OrderContentsProp = {
   order: OrderItem[];
-  removeItem: (id: MenuItem["id"]) => void;
+  dispatch: Dispatch<OrderActions>;
 };
 
-export default function OrderContents({ order, removeItem }: OrderContentsProp) {
+export default function OrderContents({ order, dispatch }: OrderContentsProp) {
   return (
     <>
       {order.length === 0 ? (
@@ -29,7 +31,12 @@ export default function OrderContents({ order, removeItem }: OrderContentsProp) 
               </div>
             </div>
             <div>
-              <button onClick={() => removeItem(item.id)} className="text-4xl text-red-400 hover:text-red-500 ml-3 ">
+              <button
+                onClick={() =>
+                  dispatch({ type: "remove-item", payload: { id: item.id } })
+                }
+                className="text-4xl text-red-400 hover:text-red-500 ml-3 "
+              >
                 <TiDelete />
               </button>
             </div>

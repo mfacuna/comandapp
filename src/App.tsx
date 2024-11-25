@@ -1,13 +1,15 @@
 import { menuItems } from "./data/db";
 import MenuItem from "./components/MenuItem";
 import OrderContents from "./components/OrderContents";
-import useOrder from "./hooks/useOrder";
 import Categorias from "./components/Categorias";
 import OrderTotals from "./components/OrderTotals";
 import TipPercentageForm from "./components/TipPercentageForm";
+import { useReducer } from "react";
+import { initialState, orderReducer } from "./reducers/order-reducer";
 
 function App() {
-  const { order, tip, setTip, addItem, removeItem } = useOrder();
+
+  const [state, dispatch]  = useReducer(orderReducer, initialState);
 
   return (
     <>
@@ -27,21 +29,24 @@ function App() {
 
             <div className="space-y-3 overflow-y-auto scrollbar sm:max-h-96 max-h-52">
               {menuItems.map((item) => (
-                <MenuItem key={item.id} item={item} addItem={addItem} />
+                <MenuItem 
+                  key={item.id} 
+                  item={item} 
+                  dispatch={dispatch} />
               ))}
             </div>
           </div>
           <div className="p-5 m-3 rounded-md bg-amber-100 bg-opacity-85 shadow-md overflow-hidden">
             <h2 className="text-teal-600 text-xl mb-4">Consumo</h2>
             <div className="overflow-y-auto scrollbar sm:max-h-96 max-h-52">
-              <OrderContents order={order} removeItem={removeItem} />
+              <OrderContents order={state.order} dispatch={dispatch} />
             </div>
           </div>
         </div>
-        {order.length !== 0 ? (
+        {state.order.length !== 0 ? (
           <div className="grid md:grid-cols-2 rounded-md bg-slate-100 bg-opacity-85 shadow-md h-fit p-5 m-3 space-y-5 md:space-y-0">
-            <TipPercentageForm setTip={setTip} />
-            <OrderTotals order={order} tip={tip} />
+            <TipPercentageForm dispatch={dispatch} />
+            <OrderTotals order={state.order} tip={state.tip} dispatch={dispatch} />
           </div>
         ) : null}
       </main>
